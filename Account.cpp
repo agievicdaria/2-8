@@ -50,69 +50,69 @@ ostream& operator<<(ostream& out, const Account::Money& money) {
     return out;
 }
 
-Account::Money Account::Money::operator+(const Money& secondValue) const {
-    long totalHryvnia = hryvnia + secondValue.hryvnia;
-    int totalKopiyky = kopiyky + secondValue.kopiyky;
+Account::Money operator+(const Account::Money& firstValue, const Account::Money& secondValue) {
+    long totalHryvnia = firstValue.hryvnia + secondValue.hryvnia;
+    int totalKopiyky = firstValue.kopiyky + secondValue.kopiyky;
 
     if (totalKopiyky >= 100) {
         totalHryvnia += totalKopiyky / 100;
         totalKopiyky %= 100;
     }
 
-    return Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
+    return Account::Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
 }
 
-Account::Money Account::Money::operator-(const Money& secondValue) const {
-    long totalHryvnia = hryvnia - secondValue.hryvnia;
-    int totalKopiyky = kopiyky - secondValue.kopiyky;
+Account::Money operator-(const Account::Money& firstValue, const Account::Money& secondValue) {
+    long totalHryvnia = firstValue.hryvnia - secondValue.hryvnia;
+    int totalKopiyky = firstValue.kopiyky - secondValue.kopiyky;
 
     if (totalKopiyky < 0) {
         totalHryvnia -= 1;
         totalKopiyky += 100;
     }
 
-    return Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
+    return Account::Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
 }
 
-Account::Money Account::Money::operator/(int divisor) const {
-    long totalHryvnia = hryvnia / divisor;
-    int totalKopiyky = (hryvnia % divisor) * 100 / divisor + kopiyky / divisor;
+Account::Money operator/(const Account::Money& value, int divisor) {
+    long totalHryvnia = value.hryvnia / divisor;
+    int totalKopiyky = (value.hryvnia % divisor) * 100 / divisor + value.kopiyky / divisor;
 
-    return Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
+    return Account::Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
 }
 
-Account::Money Account::Money::operator/(double divisor) const {
-    double totalMoney = static_cast<double>(hryvnia * 100 + kopiyky) / divisor;
+Account::Money operator/(const Account::Money& value, double divisor) {
+    double totalMoney = static_cast<double>(value.hryvnia * 100 + value.kopiyky) / divisor;
     long totalHryvnia = static_cast<long>(totalMoney) / 100;
     int totalKopiyky = static_cast<int>(totalMoney) % 100;
 
-    return Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
+    return Account::Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
 }
 
-Account::Money Account::Money::operator*(double multiplier) const {
-    double totalMoney = static_cast<double>(hryvnia * 100 + kopiyky) * multiplier;
+Account::Money operator*(const Account::Money& value, double multiplier) {
+    double totalMoney = static_cast<double>(value.hryvnia * 100 + value.kopiyky) * multiplier;
     long totalHryvnia = static_cast<long>(totalMoney) / 100;
     int totalKopiyky = static_cast<int>(totalMoney) % 100;
 
-    return Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
+    return Account::Money(totalHryvnia, static_cast<unsigned char>(totalKopiyky));
 }
 
-bool Account::Money::operator==(const Money& secondValue) const {
-    return hryvnia == secondValue.hryvnia && kopiyky == secondValue.kopiyky;
+bool operator==(const Account::Money& firstValue, const Account::Money& secondValue) {
+    return firstValue.hryvnia == secondValue.hryvnia && firstValue.kopiyky == secondValue.kopiyky;
 }
 
-bool Account::Money::operator<(const Money& secondValue) const {
-    if (hryvnia == secondValue.hryvnia) {
-        return kopiyky < secondValue.kopiyky;
+bool operator<(const Account::Money& firstValue, const Account::Money& secondValue) {
+    if (firstValue.hryvnia == secondValue.hryvnia) {
+        return firstValue.kopiyky < secondValue.kopiyky;
     }
-    return hryvnia < secondValue.hryvnia;
+    return firstValue.hryvnia < secondValue.hryvnia;
 }
 
-bool Account::Money::operator>(const Money& secondValue) const {
-    if (hryvnia == secondValue.hryvnia) {
-        return kopiyky > secondValue.kopiyky;
+bool operator>(const Account::Money& firstValue, const Account::Money& secondValue) {
+    if (firstValue.hryvnia == secondValue.hryvnia) {
+        return firstValue.kopiyky > secondValue.kopiyky;
     }
-    return hryvnia > secondValue.hryvnia;
+    return firstValue.hryvnia > secondValue.hryvnia;
 }
 
 Account::Money& Account::Money::operator++() {
@@ -199,11 +199,7 @@ istream& operator>>(istream& in, Account& account) {
 }
 
 ostream& operator<<(ostream& out, const Account& account) {
-    out << "Owner: " << account.ownerLastName << endl;
-    out << "Account Number: " << account.accountNumber << endl;
-    out << "Interest Rate: " << account.interestRate << endl;
-    out << "Balance: " << account.balance.GetHryvnia() << "," << static_cast<int>(account.balance.GetKopiyky()) << endl;
-
+    out << string(account);
     return out;
 }
 
@@ -251,9 +247,12 @@ string Account::AmountInWords() const {
     return amountInWords;
 }
 
-string Account::ToString() const {
+Account::operator string() const {
     stringstream sout;
-    sout << balance.GetHryvnia() << "," << static_cast<int>(balance.GetKopiyky());
+    sout << "Owner: " << ownerLastName << endl;
+    sout << "Account Number: " << accountNumber << endl;
+    sout << "Interest Rate: " << interestRate << endl;
+    sout << "Balance: " << balance.GetHryvnia() << "," << static_cast<int>(balance.GetKopiyky()) << endl;
     return sout.str();
 }
 

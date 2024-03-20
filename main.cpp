@@ -22,13 +22,13 @@ int main() {
     cout << account;
 
     account.ConvertToDollars();
-    cout << "Balance in dollars: " << account.ToString() << endl;
+    cout << "Balance in dollars: " << account << endl;
 
     account.ConvertToEuros();
-    cout << "Balance in euros: " << account.ToString() << endl;
+    cout << "Balance in euros: " << account << endl;
 
     account.ConvertToHryvnya();
-    cout << "Balance in hryvnia: " << account.ToString() << endl;
+    cout << "Balance in hryvnia: " << account << endl;
 
     cout << "Balance in words: " << account.AmountInWords() << endl;
     
